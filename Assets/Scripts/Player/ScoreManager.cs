@@ -57,7 +57,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = "Score: " + score.ToString();
+            scoreText.text = "Досвід: " + score.ToString();
         }
     }
 }

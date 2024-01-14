@@ -132,8 +132,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 TakeDamage(bullet.damage);
                 Destroy(other.gameObject);
-
-                Debug.Log("Player took damage from enemy bullet!");
             }
         }
     }

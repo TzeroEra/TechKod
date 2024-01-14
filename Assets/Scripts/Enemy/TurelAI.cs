@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum EnemyType
+{
+    Moving,
+    Static 
+}
+
+public enum WeaponType
+{
+    Normal,
+    Shotgun,
+    Sniper
+}
+
 public class TurelAI : MonoBehaviour
 {
     public GameObject bulletPrefab;
@@ -16,14 +29,26 @@ public class TurelAI : MonoBehaviour
     public Slider healthBar;
     public Canvas canvas;
 
-    private float maxHealth = 100f;
+    public float maxHealth = 100f;
     private float currentHealth;
+
+    public int pointsForDestruction = 10;
+
+    public EnemyType enemyType;
+    public WeaponType weaponType;
+
+    private MovingEnemyController movingEnemyController;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         currentHealth = maxHealth;
         UpdateHealthBar();
+
+        if (enemyType == EnemyType.Moving)
+        {
+            movingEnemyController = gameObject.AddComponent<MovingEnemyController>();
+        }
     }
 
     void Update()
@@ -62,6 +87,11 @@ public class TurelAI : MonoBehaviour
             float healthPercentage = CalculateHealthPercentage();
             healthBar.value = healthPercentage;
         }
+
+        if (enemyType == EnemyType.Moving)
+        {
+            movingEnemyController.Update();
+        }
     }
 
     void ResetShoot()
@@ -85,6 +115,8 @@ public class TurelAI : MonoBehaviour
 
     void Die()
     {
+        ScoreManager.Instance.AddScore(pointsForDestruction);
+
         Destroy(gameObject);
     }
 

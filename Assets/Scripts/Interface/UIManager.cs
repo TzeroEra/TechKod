@@ -9,7 +9,17 @@ public class UIManager : MonoBehaviour
     {
         if (activeWeaponText != null)
         {
-            activeWeaponText.text = "Активна зброя: " + currentWeapon.GetType().Name;
+            if (currentWeapon != null)
+            {
+                if (currentWeapon.GetType() == typeof(Shotgun))
+                {
+                    activeWeaponText.text = "Активна зброя: Дробовик";
+                }
+                else if (currentWeapon.GetType() == typeof(LongRangeGun))
+                {
+                    activeWeaponText.text = "Активна зброя: Гвинтівка";
+                }
+            }
         }
     }
 }
