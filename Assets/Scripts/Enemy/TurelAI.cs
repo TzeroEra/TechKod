@@ -2,52 +2,97 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public enum EnemyType
 {
     Moving,
-    Static 
+    Static,
+    Turel
 }
 
 public enum WeaponType
 {
     Normal,
     Shotgun,
-    Sniper
+    Sniper,
+    Minigun
 }
 
-public class TurelAI : MonoBehaviour
+public class TurelAI : MonoBehaviour, IScoreManager
 {
     public GameObject bulletPrefab;
-    public float bulletSpeed = 5f;
-    public float shootingInterval = 1f;
-    public float shootingRange = 5f;
-
+    private float bulletSpeed;
+    private float shootingInterval;
+    private float shootingRange;
+    private int shotgunPelletCount;
+    private float minigunShootingInterval;
+    private int minigunBulletCount;
+    private float minigunSpreadAngle;
     private bool canShoot = true;
     private Transform player;
 
     public Slider healthBar;
     public Canvas canvas;
 
-    public float maxHealth = 100f;
+    private float maxHealth;
     private float currentHealth;
-
-    public int pointsForDestruction = 10;
-
-    public EnemyType enemyType;
-    public WeaponType weaponType;
+    private int pointsForDestruction;
+    private EnemyType enemyType;
+    private WeaponType weaponType;
 
     private MovingEnemyController movingEnemyController;
+    private TurelEnemyController turelEnemyController;
+    public EnemySettings enemySettings;
+
+    [Inject]
+    private IScoreManager scoreManager;
 
     void Start()
     {
+        if (enemySettings == null)
+        {
+            Debug.LogError("EnemySettings component not found! Attach it via Unity Inspector.");
+            return;
+        }
+
+        shootingRange = enemySettings.shootingRange;
+        maxHealth = enemySettings.maxHealth;
+        enemyType = enemySettings.enemyType;
+        weaponType = enemySettings.weaponType;
+        bulletSpeed = enemySettings.bulletSpeed;
+        shootingInterval = enemySettings.shootingInterval;
+        shotgunPelletCount = enemySettings.shotgunPelletCount;
+        minigunShootingInterval = enemySettings.minigunShootingInterval;
+        minigunBulletCount = enemySettings.minigunBulletCount;
+        minigunSpreadAngle = enemySettings.minigunSpreadAngle;
+        pointsForDestruction = enemySettings.pointsForDestruction;
+
         player = GameObject.FindGameObjectWithTag("Player").transform;
         currentHealth = maxHealth;
         UpdateHealthBar();
 
-        if (enemyType == EnemyType.Moving)
+        switch (enemyType)
         {
-            movingEnemyController = gameObject.AddComponent<MovingEnemyController>();
+            case EnemyType.Moving:
+                gameObject.tag = "MovingEnemy";
+                movingEnemyController = gameObject.AddComponent<MovingEnemyController>();
+                break;
+
+            case EnemyType.Static:
+                gameObject.tag = "StaticEnemy";
+                break;
+
+            case EnemyType.Turel:
+                gameObject.tag = "TurelEnemy";
+                turelEnemyController = gameObject.AddComponent<TurelEnemyController>();
+                Rigidbody2D rbMoving = gameObject.AddComponent<Rigidbody2D>();
+                rbMoving.constraints = RigidbodyConstraints2D.FreezeRotation;
+                break;
+
+            default:
+                Debug.LogError("Unknown enemy type");
+                break;
         }
     }
 
@@ -62,16 +107,35 @@ public class TurelAI : MonoBehaviour
                 if (canShoot)
                 {
                     canShoot = false;
-                    Invoke("ResetShoot", shootingInterval);
 
-                    Vector3 direction = (player.position - transform.position).normalized;
-                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+                    float interval = (weaponType == WeaponType.Minigun) ? minigunShootingInterval : shootingInterval;
 
-                    GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation);
-                    Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
-                    bulletRB.velocity = direction * bulletSpeed;
-                    Destroy(bullet, 2f);
+                    Invoke("ResetShoot", interval);
+
+                    switch (weaponType)
+                    {
+                        case WeaponType.Shotgun:
+                            for (int i = 0; i < shotgunPelletCount; i++)
+                            {
+                                ShootWithSpread(i * 10f);
+                            }
+                            break;
+
+                        case WeaponType.Sniper:
+                            ShootStraight();
+                            break;
+
+                        case WeaponType.Minigun:
+                            for (int i = 0; i < minigunBulletCount; i++)
+                            {
+                                ShootStraight();
+                            }
+                            break;
+
+                        default:
+                            ShootStraight();
+                            break;
+                    }
                 }
             }
         }
@@ -113,9 +177,17 @@ public class TurelAI : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Die()
     {
-        ScoreManager.Instance.AddScore(pointsForDestruction);
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(pointsForDestruction);
+            Debug.Log("Points after destruction: " + pointsForDestruction);
+        }
+        else
+        {
+            Debug.LogError("ScoreManager is not assigned. Make sure to assign it in the Inspector or through dependency injection.");
+        }
 
         Destroy(gameObject);
     }
@@ -146,4 +218,41 @@ public class TurelAI : MonoBehaviour
             }
         }
     }
+
+    void ShootStraight()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation);
+        Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
+        bulletRB.velocity = direction * bulletSpeed;
+        Destroy(bullet, 2f);
+    }
+
+    void ShootWithSpread(float angleOffset)
+    {
+        Vector3 direction = Quaternion.Euler(0f, 0f, angleOffset) * (player.position - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation);
+        Rigidbody2D bulletRB = bullet.GetComponent<Rigidbody2D>();
+        bulletRB.velocity = direction * bulletSpeed;
+        Destroy(bullet, 2f);
+    }
+
+    public void AddScore(int points)
+    {
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(points);
+        }
+        else
+        {
+            Debug.LogError("ScoreManager is not assigned. Make sure to assign it in the Inspector or through dependency injection.");
+        }
+    }
 }
+

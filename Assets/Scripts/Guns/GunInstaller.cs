@@ -5,6 +5,7 @@ public class GunInstaller : MonoInstaller
 {
     public GameObject shotgunPrefab;
     public GameObject longRangeGunPrefab;
+    public UIManagerScore uiManagerScorePrefab;
 
     public override void InstallBindings()
     {

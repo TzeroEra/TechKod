@@ -1,4 +1,0 @@
-interface IService
-{
-    void Test();
-}

@@ -1,5 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+using Zenject;
 
 public class UIManager : MonoBehaviour
 {
@@ -18,6 +22,10 @@ public class UIManager : MonoBehaviour
                 else if (currentWeapon.GetType() == typeof(LongRangeGun))
                 {
                     activeWeaponText.text = "Активна зброя: Гвинтівка";
+                }
+                else if (currentWeapon.GetType() == typeof(LaserGun))
+                {
+                    activeWeaponText.text = "Активна зброя: Лазер";
                 }
             }
         }

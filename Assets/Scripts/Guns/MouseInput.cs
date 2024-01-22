@@ -13,14 +13,17 @@ public class MouseInput : MonoBehaviour
 
     [SerializeField] private Shotgun shotgun;
     [SerializeField] private LongRangeGun longRangeGun;
+    [SerializeField] private LaserGun laserGun;
 
     private UIManager uiManager;
 
     private float shotgunReloadTime = 1.5f; 
-    private float longRangeGunReloadTime = 0.5f; 
+    private float longRangeGunReloadTime = 0.5f;
+    private float laserGunReloadTime = 3f;
 
     private float shotgunTimeSinceLastShot = 0f; 
-    private float longRangeGunTimeSinceLastShot = 0f; 
+    private float longRangeGunTimeSinceLastShot = 0f;
+    private float laserGunTimeSinceLastShot = 0f;
 
     private void Start()
     {
@@ -60,6 +63,11 @@ public class MouseInput : MonoBehaviour
             SwitchToLongRangeGun();
             UpdateActiveWeaponText();
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SwitchToLaserGun();
+            UpdateActiveWeaponText();
+        }
     }
 
     private void SwitchToShotgun()
@@ -72,6 +80,11 @@ public class MouseInput : MonoBehaviour
         currentWeapon = longRangeGun;
     }
 
+    private void SwitchToLaserGun()
+    {
+        currentWeapon = laserGun;
+    }
+
     private void SwitchToNextWeapon()
     {
         if (currentWeapon == shotgun)
@@ -79,6 +92,10 @@ public class MouseInput : MonoBehaviour
             currentWeapon = longRangeGun;
         }
         else if (currentWeapon == longRangeGun)
+        {
+            currentWeapon = laserGun;
+        }
+        else if (currentWeapon == laserGun)
         {
             currentWeapon = shotgun;
         }
@@ -96,6 +113,10 @@ public class MouseInput : MonoBehaviour
         {
             return longRangeGunTimeSinceLastShot >= longRangeGunReloadTime;
         }
+        else if (currentWeapon == laserGun)
+        {
+            return laserGunTimeSinceLastShot >= laserGunReloadTime;
+        }
 
         return false;
     }
@@ -110,12 +131,17 @@ public class MouseInput : MonoBehaviour
         {
             longRangeGunTimeSinceLastShot = 0f;
         }
+        else if (currentWeapon == laserGun)
+        {
+            laserGunTimeSinceLastShot = 0f;
+        }
     }
 
     private void UpdateReloadTimers()
     {
         shotgunTimeSinceLastShot += Time.deltaTime;
         longRangeGunTimeSinceLastShot += Time.deltaTime;
+        laserGunTimeSinceLastShot += Time.deltaTime;
     }
 
     private void UpdateActiveWeaponText()

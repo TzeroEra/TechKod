@@ -5,15 +5,34 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float lifeTime = 2.0f;
-    public int damage = 10; // Додайте властивість damage
+    public int damage = 10; 
 
     private void Start()
     {
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        // Обробка подій при зіткненні патрона з іншим об'єктом, якщо потрібно
+        var player = other.GetComponent<PlayerMovement>();
+        if (player != null && gameObject.CompareTag("EnemyBullet"))
+        {
+            player.TakeDamage(damage);
+            Destroy(gameObject);
+        }
+        if (gameObject.CompareTag("EnemyBullet") && !other.CompareTag("TurelEnemy"))
+        {
+            Destroy(gameObject);
+        }
+
+        //if (other.CompareTag("Player"))
+        //{
+        //    Bullet bullet = other.GetComponent<Bullet>();
+        //    if (bullet != null)
+        //    {
+        //        TakeDamage(bullet.damage);
+        //        Destroy(other.gameObject);
+        //    }
+        //}
     }
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,11 +23,15 @@ public class PlayerMovement : MonoBehaviour
     private float maxHealth = 100f;
     private float currentHealth;
 
+    private Animator animator;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         UpdateHealthBar();
+
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -48,6 +54,8 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(EnableImmortality());
         }
+
+        animator.SetBool("IsWalking", Mathf.Abs(moveInput) > 0);
 
         if (moveInput < 0)
         {
@@ -120,19 +128,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Die()
     {
-
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("EnemyBullet"))
-        {
-            Bullet bullet = other.GetComponent<Bullet>();
-            if (bullet != null)
-            {
-                TakeDamage(bullet.damage);
-                Destroy(other.gameObject);
-            }
-        }
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

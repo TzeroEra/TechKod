@@ -7,6 +7,10 @@ TagManager:
   - NoEnemy
   - PlayerBullet
   - EnemyBullet
+  - Enemy
+  - MovingEnemy
+  - StaticEnemy
+  - TurelEnemy
   layers:
   - Default
   - TransparentFX
