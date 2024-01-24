@@ -14,18 +14,23 @@ public class PartSlot : MonoBehaviour
         this.part = part;
         this.partShop = partShop;
         this.slotIndex = slotIndex;
+
+        if (part != null)
+        {
+            ApplyBonusToPlayer();
+        }
     }
 
-    public void UsePart()
+    public void ApplyBonusToPlayer()
     {
-        Debug.Log("Застосовано бонус: " + part.name);
-
-        if (part.bonusType == Part.BonusType.Health)
+        if (part != null && partShop != null)
         {
-
+            Debug.Log($"Applying bonus to player: {part.bonusType}");
+            partShop.ApplyBonusToPlayer(part.bonusType);
         }
-
-        Destroy(gameObject);
-        partShop.UpdateSlots();
+        else
+        {
+            Debug.LogWarning("Part or PartShop is null");
+        }
     }
 }

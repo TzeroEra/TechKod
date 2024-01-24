@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveInput;
 
     public Slider healthSlider; 
-    private float maxHealth = 100f;
+    public float maxHealth = 100f;
     private float currentHealth;
 
     private Animator animator;
@@ -126,8 +126,36 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void ApplyBonus(Part.BonusType bonusType)
+    {
+        switch (bonusType)
+        {
+            case Part.BonusType.Health:
+                IncreaseMaxHealth();
+                break;
+            case Part.BonusType.Damage:
+                // Додайте код для обробки бонусу "Damage" (якщо потрібно)
+                break;
+        }
+    }
+
+    private void IncreaseMaxHealth()
+    {
+        maxHealth *= 2f;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        UpdateHealthBar();
+        Debug.Log("Здоров'я гравця збільшено вдвічі!");
+    }
+
     private void Die()
     {
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+        UpdateHealthBar();
     }
 }

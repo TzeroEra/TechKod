@@ -17,8 +17,11 @@ public class PartShop : MonoBehaviour
     {
         scoreManager = ScoreManager.Instance;
 
-        scoreManager.SetScoreUI(new UIManagerScore());
-        UpdateSlots();
+        if (scoreManager != null)
+        {
+            scoreManager.SetScoreUI(new UIManagerScore());
+            UpdateSlots();
+        }
 
         partCanvas.SetActive(false);
         partCanvas_2.SetActive(false);
@@ -79,17 +82,12 @@ public class PartShop : MonoBehaviour
             {
                 if (slots[i].childCount == 0)
                 {
-                    GameObject partObject = Instantiate(part.prefab, slots[i]);
-                    PartSlot partSlot = partObject.GetComponent<PartSlot>();
-                    partSlot.Setup(part, this, i);
+                    GameObject partObject = new GameObject("PartSlot");
+                    PartSlot partSlotComponent = partObject.AddComponent<PartSlot>();
 
-                    Image image = partObject.GetComponent<Image>();
-                    if (image != null)
-                    {
-                        image.color = Color.green;
-                    }
+                    partSlotComponent.Setup(part, this, i);
+                    partObject.transform.parent = slots[i];
 
-                    UpdateSlots();
                     return true;
                 }
             }
@@ -98,6 +96,11 @@ public class PartShop : MonoBehaviour
         return false;
     }
 
+
+    public void ApplyBonusToPlayer(Part.BonusType bonusType)
+    {
+       
+    }
 
     public void OnAvailablePartClick(int partIndex)
     {
@@ -124,13 +127,12 @@ public class Part
     public GameObject prefab;
     public int cost;
     public bool isPurchased = false;
-    public bool isSlot = false;
     public BonusType bonusType;
 
     public enum BonusType
     {
-        None, // Бонус відсутній
-        Health, // Бонус для здоров'я
-        Damage // Бонус для пошкоджень (можна додати інші типи)
+        None, 
+        Health, 
+        Damage 
     }
 }

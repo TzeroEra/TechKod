@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IEnemyFactory
 {
-    GameObject CreateEnemy(Vector3 position, EnemySettings settings);
+    GameObject CreateEnemy(Vector3 position, EnemySettingsSO settings);
     //string Tag
 }
 

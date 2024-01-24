@@ -5,7 +5,7 @@ using Zenject;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public EnemySettings enemySettings;
+    public EnemySettingsSO enemySettings;
 
     [Inject]
     public IEnemyFactory enemyFactory;

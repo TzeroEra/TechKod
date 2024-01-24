@@ -12,10 +12,8 @@ public class EnemyFactory : IEnemyFactory
         _enemyPrefab = enemyPrefab;
     }
 
-    public GameObject CreateEnemy(Vector3 position, EnemySettings settings)
-    //string Tag
+    public GameObject CreateEnemy(Vector3 position, EnemySettingsSO settings)  // Замініть на EnemySettingsSO
     {
-
         GameObject newEnemy = _diContainer.InstantiatePrefab(_enemyPrefab);
 
         newEnemy.transform.position = position;
@@ -30,4 +28,3 @@ public class EnemyFactory : IEnemyFactory
         return newEnemy;
     }
 }
-

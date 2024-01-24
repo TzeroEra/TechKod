@@ -45,12 +45,4 @@ public class ShieldAbility : MonoBehaviour, IAbility
             protectivePart.SetActive(false);
         }
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("EnemyBullet"))
-        {
-            Debug.Log("Пошкодження отримано, але щит захистив вас!");
-        }
-    }
 }

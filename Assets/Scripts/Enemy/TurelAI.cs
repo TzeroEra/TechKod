@@ -43,7 +43,7 @@ public class TurelAI : MonoBehaviour, IScoreManager
 
     private MovingEnemyController movingEnemyController;
     private TurelEnemyController turelEnemyController;
-    public EnemySettings enemySettings;
+    public EnemySettingsSO enemySettings;
 
     [Inject]
     private IScoreManager scoreManager;
