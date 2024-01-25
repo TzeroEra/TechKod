@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 public class PartSlot : MonoBehaviour
 {
     private Part part;
     private PartShop partShop;
     private int slotIndex;
+
+    [Inject]
+    private AbilityManager abilityManager;
 
     public void Setup(Part part, PartShop partShop, int slotIndex)
     {

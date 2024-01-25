@@ -19,7 +19,7 @@ public class PartShop : MonoBehaviour
 
         if (scoreManager != null)
         {
-            scoreManager.SetScoreUI(new UIManagerScore());
+            //scoreManager.SetScoreUI(new UIManagerScore());
             UpdateSlots();
         }
 

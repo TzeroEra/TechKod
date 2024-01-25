@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(HitPoints))]
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;

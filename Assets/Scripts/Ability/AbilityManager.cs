@@ -14,6 +14,14 @@ public class AbilityManager : MonoBehaviour
         this.energyProvider = energyProvider;
     }
 
+    public void AddShield()
+    {
+		if (activeAbility is IAddToAbilitySlot shield)
+        {
+			shield.AddShield();
+        }
+    }
+
     public IEnergyProvider EnergyProvider => energyProvider;
 
     public void ActivateAbility(IAbility ability, float energyCost)

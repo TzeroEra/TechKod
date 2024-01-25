@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,32 @@ public enum WeaponType
     Minigun
 }
 
-public class TurelAI : MonoBehaviour, IScoreManager
+public class HitPoints : MonoBehaviour
+{
+    public event Action OnDie;
+    public event Action<int, int> OnHpChanged;
+
+    // OnHpChanged?.Invoke();
+}
+
+public class HitPointsUI : MonoBehaviour
+{
+    [SerializeField]
+    public HitPoints hitPoints;
+
+	private void Start()
+	{
+        hitPoints.OnHpChanged += UpdateHpView;
+	}
+
+    private void UpdateHpView(int currentHp, int maxHP)
+    {
+        //
+    }
+}
+
+[RequireComponent(typeof(HitPoints))]
+public class TurelAI : MonoBehaviour
 {
     public GameObject bulletPrefab;
     private float bulletSpeed;
@@ -47,8 +73,10 @@ public class TurelAI : MonoBehaviour, IScoreManager
 
     [Inject]
     private IScoreManager scoreManager;
+	[Inject]
+	private WeaponFactory weaponFactory;
 
-    void Start()
+	void Start()
     {
         if (enemySettings == null)
         {

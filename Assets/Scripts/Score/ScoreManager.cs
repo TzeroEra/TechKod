@@ -4,19 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Zenject;
+using System;
 
 public interface IScoreManager
 {
-    void AddScore(int points);
-}
-
-public interface IScoreUI
-{
-    void UpdateScoreText(int score);
+    int Score { get; }
+	event Action<int> OnScoreChanged;
+	void AddScore(int points);
 }
 
 public class ScoreManager : MonoBehaviour, IScoreManager
 {
+    public event Action<int> OnScoreChanged;
     public int Score => score;
 
     private int score = 50;
@@ -24,8 +23,6 @@ public class ScoreManager : MonoBehaviour, IScoreManager
     private static ScoreManager instance;
 
     public static ScoreManager Instance => instance;
-
-    private IScoreUI scoreUI;
 
     private void Awake()
     {
@@ -40,27 +37,9 @@ public class ScoreManager : MonoBehaviour, IScoreManager
         }
     }
 
-    public void SetScoreUI(IScoreUI ui)
-    {
-        scoreUI = ui;
-        UpdateScoreText();
-        Debug.Log("SetScoreUI called");
-    }
-
     public void AddScore(int points)
     {
         score += points;
-        Debug.Log("Score added: " + points);
-        UpdateScoreText();
-    }
-
-    private void UpdateScoreText()
-    {
-        if (scoreUI != null)
-        {
-            scoreUI.UpdateScoreText(score);
-            Debug.Log("Score updated: " + score);
-        }
+        OnScoreChanged(score);
     }
 }
-

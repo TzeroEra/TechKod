@@ -7,6 +7,6 @@ public class ScoreInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        Container.Bind<IScoreManager>().To<ScoreManager>().FromNewComponentOnNewGameObject().AsSingle();
+        Container.Bind<IScoreManager>().To<ScoreManager>().FromComponentInHierarchy().AsSingle();
     }
 }

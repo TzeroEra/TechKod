@@ -1,7 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class ShieldAbility : MonoBehaviour, IAbility
+public interface IAddToAbilitySlot
+{
+    void AddShield();
+}
+
+public class ShieldAbility : MonoBehaviour, IAbility, IAddToAbilitySlot
 {
     public GameObject rotatingPart;
     public GameObject protectivePart;
@@ -13,6 +18,10 @@ public class ShieldAbility : MonoBehaviour, IAbility
         CreateShield();
         StartCoroutine(RotateShield());
         StartCoroutine(ShieldTimer());
+    }
+
+    public void AddShield()
+    { 
     }
 
     private void CreateShield()

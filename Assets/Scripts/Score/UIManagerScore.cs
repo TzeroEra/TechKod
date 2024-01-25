@@ -5,22 +5,31 @@ using UnityEngine.UI;
 using TMPro;
 using Zenject;
 
-public class UIManagerScore : MonoBehaviour, IScoreUI
+public class UIManagerScore : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
 
-    private void Start()
+    [Inject]
+    private void Construct(IScoreManager scoreManager)
     {
-        ScoreManager.Instance.SetScoreUI(this);
-        Debug.Log("UIManagerScore Start called");
-    }
+        _scoreManager = scoreManager;
 
-    public void UpdateScoreText(int score)
+        UpdateScoreText(_scoreManager.Score);
+
+        _scoreManager.OnScoreChanged += UpdateScoreText;
+    }
+	IScoreManager _scoreManager;
+
+	private void OnDestroy()
+	{
+        _scoreManager.OnScoreChanged -= UpdateScoreText;
+	}
+
+	public void UpdateScoreText(int score)
     {
         if (scoreText != null)
         {
             scoreText.text = "Досвід: " + score.ToString();
-            Debug.Log("Score updated: " + score);
         }
     }
 }
