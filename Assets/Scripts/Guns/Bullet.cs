@@ -14,25 +14,21 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var player = other.GetComponent<PlayerMovement>();
-        if (player != null && gameObject.CompareTag("EnemyBullet"))
+        if (gameObject.CompareTag("EnemyBullet"))
         {
-            player.TakeDamage(damage);
-            Destroy(gameObject);
+            if (other.CompareTag("Player"))
+            {
+                PlayerMovement player = other.GetComponent<PlayerMovement>();
+                if (player != null)
+                {
+                    player.TakeDamage(damage);
+                }
+                Destroy(gameObject);
+            }
+            else if (!other.CompareTag("EnemyBullet") && !other.CompareTag("TurelEnemy") && !other.CompareTag("StaticEnemy") && !other.CompareTag("MovingEnemy"))
+            {
+                Destroy(gameObject);
+            }
         }
-        if (gameObject.CompareTag("EnemyBullet") && !other.CompareTag("TurelEnemy"))
-        {
-            Destroy(gameObject);
-        }
-
-        //if (other.CompareTag("Player"))
-        //{
-        //    Bullet bullet = other.GetComponent<Bullet>();
-        //    if (bullet != null)
-        //    {
-        //        TakeDamage(bullet.damage);
-        //        Destroy(other.gameObject);
-        //    }
-        //}
     }
 }

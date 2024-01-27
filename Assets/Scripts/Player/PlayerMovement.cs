@@ -60,11 +60,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (moveInput < 0)
         {
-            transform.localScale = new Vector3(-0.5f, 0.5f, 0.5f);
+            //transform.localScale = new Vector3(-0.5f, 0.5f, 0.5f);
         }
         else if (moveInput > 0)
         {
-            transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            //transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
     }
 

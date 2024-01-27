@@ -133,6 +133,7 @@ public class Part
     {
         None, 
         Health, 
-        Damage 
+        Damage,
+        Shield
     }
 }

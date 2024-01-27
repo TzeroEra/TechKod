@@ -3,16 +3,17 @@ using Zenject;
 
 public class GunInstaller : MonoInstaller
 {
-    public GameObject shotgunPrefab;
-    public GameObject longRangeGunPrefab;
-    public UIManagerScore uiManagerScorePrefab;
+    public GameObject[] weaponPrefabs;
 
     public override void InstallBindings()
     {
-		Container.Bind<WeaponFactory>().ToSelf().AsSingle();
+        Container.Bind<WeaponFactory>().ToSelf().AsSingle();
 
-		Container.Bind<Shotgun>().FromComponentInNewPrefab(shotgunPrefab).AsSingle();
-        Container.Bind<LongRangeGun>().FromComponentInNewPrefab(longRangeGunPrefab).AsSingle();
+        //foreach (var weaponPrefab in weaponPrefabs)
+        //{
+        //    Container.Bind<IWeapon>().FromComponentInNewPrefab(weaponPrefab).AsCached();
+        //    Debug.Log($"Bound IWeapon to prefab: {weaponPrefab.name}");
+        //}
     }
 }
 
@@ -25,19 +26,24 @@ public class WeaponFactory
         _diContainer = container;
     }
 
+
+
     public IWeapon Create(string typeEnum)
     {
-        var all = Resources.LoadAll("Prefabs/Weapons");
-        foreach (var item in all)
+        var allWeapons = Resources.LoadAll<GameObject>("Prefabs/Weapons");
+
+        foreach (var weaponPrefab in allWeapons)
         {
-            if (item.name == typeEnum)
+            if (weaponPrefab.name == typeEnum)
             {
-                // Instantinate...
+                Debug.Log($"Loading weapon: {typeEnum}");
+                var weaponInstance = _diContainer.InstantiatePrefabForComponent<IWeapon>(weaponPrefab);
+                Debug.Log($"Weapon loaded successfully: {typeEnum}");
+                return weaponInstance;
             }
         }
 
-        var weapon = Resources.Load<GameObject>($"Prefabs/Weapons/{typeEnum}");
-
-        return _diContainer.InstantiatePrefabForComponent<IWeapon>(weapon);
+        Debug.LogError($"Failed to load weapon: {typeEnum}. Prefab not found.");
+        return null;
     }
 }

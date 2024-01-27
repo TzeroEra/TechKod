@@ -11,7 +11,9 @@ public class LaserGun : MonoBehaviour, IWeapon
     public float reloadTime = 3f;
     private float timeSinceLastShot = 0f;
     private bool canShoot = true;
-    private GameObject currentLaser; // Зберігає посилання на поточний лазер
+    private GameObject currentLaser;
+    private float laserGunReloadTime = 3f;
+    public float ReloadTime { get => laserGunReloadTime; }
 
     public void Shoot(Vector3 targetPosition)
     {
@@ -20,7 +22,6 @@ public class LaserGun : MonoBehaviour, IWeapon
             Vector2 shootDirection = (targetPosition - firePoint.position).normalized;
             currentLaser = Instantiate(laserPrefab, firePoint.position, Quaternion.identity);
             Rigidbody2D rb = currentLaser.GetComponent<Rigidbody2D>();
-            // Не встановлюємо швидкість, оскільки ми будемо змінювати позицію вручну
             Destroy(currentLaser, laserPrefab.GetComponent<Laser>().lifeTime);
 
             canShoot = false;
@@ -30,7 +31,6 @@ public class LaserGun : MonoBehaviour, IWeapon
 
     void Update()
     {
-        // Перевіряємо, чи є поточний лазер і змінюємо його позицію відповідно до позиції гравця
         if (currentLaser != null)
         {
             currentLaser.transform.position = firePoint.position;
@@ -40,7 +40,23 @@ public class LaserGun : MonoBehaviour, IWeapon
     void ResetShoot()
     {
         canShoot = true;
-        // Знімемо можливість стріляти тільки після того, як лазер буде знищений
         currentLaser = null;
+    }
+
+    private float LastTimeShot = 0;
+
+    public bool CanShoot()
+    {
+        return LastTimeShot >= ReloadTime;
+    }
+
+    public void ResetTimer()
+    {
+        LastTimeShot = 0;
+    }
+
+    public void UpdateReloadTimers()
+    {
+        LastTimeShot += Time.deltaTime;
     }
 }

@@ -10,9 +10,16 @@ public class Shotgun : MonoBehaviour, IWeapon
     public float bulletForce = 10f;
     public int numberOfBullets = 3;
     public float spreadAngle = 10f;
+    private float shotgunReloadTime = 1.5f;
+    public float ReloadTime { get => shotgunReloadTime; }
 
     public void Shoot(Vector3 targetPosition)
     {
+        if (!CanShoot())
+        {
+            return;
+        }
+
         Vector2 shootDirection = (targetPosition - firePoint.position).normalized;
 
         for (int i = 0; i < numberOfBullets; i++)
@@ -24,5 +31,24 @@ public class Shotgun : MonoBehaviour, IWeapon
             rb.velocity = spread * bulletForce;
             Destroy(bullet, bullet.GetComponent<Bullet>().lifeTime);
         }
+
+        ResetTimer();
+    }
+
+    private float LastTimeShot = 0;
+
+    public bool CanShoot()
+    {
+        return LastTimeShot >= ReloadTime;
+    }
+
+    public void ResetTimer()
+    {
+        LastTimeShot = 0;
+    }
+
+    public void UpdateReloadTimers()
+    {
+        LastTimeShot += Time.deltaTime;
     }
 }

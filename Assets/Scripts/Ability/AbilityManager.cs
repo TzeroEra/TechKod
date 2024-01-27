@@ -7,6 +7,7 @@ public class AbilityManager : MonoBehaviour
 {
     private IAbility activeAbility;
     private IEnergyProvider energyProvider;
+    private int shieldCount; // Додайте це поле
 
     [Inject]
     public void Construct(IEnergyProvider energyProvider)
@@ -14,11 +15,21 @@ public class AbilityManager : MonoBehaviour
         this.energyProvider = energyProvider;
     }
 
+    public void SetShieldCount(int count)
+    {
+        shieldCount = count; // Оновіть кількість щитів
+    }
+
+    public int GetShieldCount() // Додайте цей метод
+    {
+        return shieldCount;
+    }
+
     public void AddShield()
     {
-		if (activeAbility is IAddToAbilitySlot shield)
+        if (activeAbility is IAddToAbilitySlot shield)
         {
-			shield.AddShield();
+            shield.AddShield();
         }
     }
 

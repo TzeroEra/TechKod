@@ -210,11 +210,6 @@ public class TurelAI : MonoBehaviour
         if (scoreManager != null)
         {
             scoreManager.AddScore(pointsForDestruction);
-            Debug.Log("Points after destruction: " + pointsForDestruction);
-        }
-        else
-        {
-            Debug.LogError("ScoreManager is not assigned. Make sure to assign it in the Inspector or through dependency injection.");
         }
 
         Destroy(gameObject);
@@ -276,10 +271,6 @@ public class TurelAI : MonoBehaviour
         if (scoreManager != null)
         {
             scoreManager.AddScore(points);
-        }
-        else
-        {
-            Debug.LogError("ScoreManager is not assigned. Make sure to assign it in the Inspector or through dependency injection.");
         }
     }
 }

@@ -19,6 +19,12 @@ public class PartSlot : MonoBehaviour
         this.partShop = partShop;
         this.slotIndex = slotIndex;
 
+        // якщо це не викликаЇтьс€ автоматично, викличте метод дл€ отриманн€ залежност≥
+        if (abilityManager == null)
+        {
+            abilityManager = GetComponent<AbilityManager>();
+        }
+
         if (part != null)
         {
             ApplyBonusToPlayer();
@@ -27,14 +33,22 @@ public class PartSlot : MonoBehaviour
 
     public void ApplyBonusToPlayer()
     {
-        if (part != null && partShop != null)
+        if (abilityManager != null && part != null && partShop != null)
         {
             Debug.Log($"Applying bonus to player: {part.bonusType}");
-            partShop.ApplyBonusToPlayer(part.bonusType);
+
+            if (part.bonusType == Part.BonusType.Shield)
+            {
+                // ќтримати поточну к≥льк≥сть щит≥в
+                int currentShields = abilityManager.GetShieldCount();
+
+                // «б≥льшити к≥льк≥сть щит≥в у два рази
+                abilityManager.SetShieldCount(currentShields * 2);
+            }
         }
         else
         {
-            Debug.LogWarning("Part or PartShop is null");
+            Debug.LogWarning("Part, PartShop, or AbilityManager is null");
         }
     }
 }

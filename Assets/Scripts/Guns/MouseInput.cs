@@ -1,14 +1,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Zenject;
+using System.Collections;
+using System.Collections.Generic;
 
 public interface IWeapon
 {
     void Shoot(Vector3 targetPosition);
+    float ReloadTime { get; }
+
+    void UpdateReloadTimers();
 }
 
 public class MouseInput : MonoBehaviour
 {
+    [Inject]
+    private WeaponFactory weaponFactory;
+
     private IWeapon currentWeapon;
 
     [SerializeField] private Shotgun shotgun;
@@ -17,13 +26,7 @@ public class MouseInput : MonoBehaviour
 
     private UIManager uiManager;
 
-    private float shotgunReloadTime = 1.5f; 
-    private float longRangeGunReloadTime = 0.5f;
-    private float laserGunReloadTime = 3f;
-
-    private float shotgunTimeSinceLastShot = 0f; 
-    private float longRangeGunTimeSinceLastShot = 0f;
-    private float laserGunTimeSinceLastShot = 0f;
+    private float LastTimeShot = 0f; 
 
     private void Start()
     {
@@ -34,16 +37,16 @@ public class MouseInput : MonoBehaviour
 
     void Update()
     {
-        UpdateReloadTimers();
+        currentWeapon.UpdateReloadTimers();
 
-        if (Input.GetMouseButtonDown(0) && CanShoot())
+        if (Input.GetMouseButton(0))
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             currentWeapon.Shoot(mousePosition);
-            ResetTimer();
         }
 
         float scrollWheelInput = Input.GetAxis("Mouse ScrollWheel");
+
         if (scrollWheelInput > 0)
         {
             SwitchToNextWeapon();
@@ -101,47 +104,6 @@ public class MouseInput : MonoBehaviour
         }
 
         UpdateActiveWeaponText();
-    }
-
-    private bool CanShoot()
-    {
-        if (currentWeapon == shotgun)
-        {
-            return shotgunTimeSinceLastShot >= shotgunReloadTime;
-        }
-        else if (currentWeapon == longRangeGun)
-        {
-            return longRangeGunTimeSinceLastShot >= longRangeGunReloadTime;
-        }
-        else if (currentWeapon == laserGun)
-        {
-            return laserGunTimeSinceLastShot >= laserGunReloadTime;
-        }
-
-        return false;
-    }
-
-    private void ResetTimer()
-    {
-        if (currentWeapon == shotgun)
-        {
-            shotgunTimeSinceLastShot = 0f;
-        }
-        else if (currentWeapon == longRangeGun)
-        {
-            longRangeGunTimeSinceLastShot = 0f;
-        }
-        else if (currentWeapon == laserGun)
-        {
-            laserGunTimeSinceLastShot = 0f;
-        }
-    }
-
-    private void UpdateReloadTimers()
-    {
-        shotgunTimeSinceLastShot += Time.deltaTime;
-        longRangeGunTimeSinceLastShot += Time.deltaTime;
-        laserGunTimeSinceLastShot += Time.deltaTime;
     }
 
     private void UpdateActiveWeaponText()
