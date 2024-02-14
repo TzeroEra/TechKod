@@ -10,20 +10,22 @@ public class PartSlot : MonoBehaviour
     private PartShop partShop;
     private int slotIndex;
 
-    [Inject]
     private AbilityManager abilityManager;
+
+    [Inject]
+    private void Construct (AbilityManager abilityManager)
+    {
+        this.abilityManager = abilityManager;
+
+        Debug.Log("Loger" + (this.abilityManager == null).ToString());
+
+    }
 
     public void Setup(Part part, PartShop partShop, int slotIndex)
     {
         this.part = part;
         this.partShop = partShop;
         this.slotIndex = slotIndex;
-
-        // якщо це не викликаЇтьс€ автоматично, викличте метод дл€ отриманн€ залежност≥
-        if (abilityManager == null)
-        {
-            abilityManager = GetComponent<AbilityManager>();
-        }
 
         if (part != null)
         {
@@ -33,22 +35,17 @@ public class PartSlot : MonoBehaviour
 
     public void ApplyBonusToPlayer()
     {
-        if (abilityManager != null && part != null && partShop != null)
-        {
-            Debug.Log($"Applying bonus to player: {part.bonusType}");
+        Debug.Log($"Applying bonus to player: {part.bonusType}");
 
-            if (part.bonusType == Part.BonusType.Shield)
+        if (part.bonusType == Part.BonusType.Shield)
+        {
+            if (abilityManager == null)
             {
-                // ќтримати поточну к≥льк≥сть щит≥в
-                int currentShields = abilityManager.GetShieldCount();
-
-                // «б≥льшити к≥льк≥сть щит≥в у два рази
-                abilityManager.SetShieldCount(currentShields * 2);
+                Debug.LogError("Error");
             }
-        }
-        else
-        {
-            Debug.LogWarning("Part, PartShop, or AbilityManager is null");
+
+            int currentShields = abilityManager.GetShieldCount();
+            abilityManager.SetShieldCount(currentShields * 2);
         }
     }
 }

@@ -22,7 +22,6 @@ public class AbilitySelector : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 testScript.Start();
-                Debug.Log("Ability selected");
             }
         }
     }
@@ -31,7 +30,7 @@ public class AbilitySelector : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Ability selection ended");
+
         }
     }
 }

@@ -12,7 +12,7 @@ public class EnemyFactory : IEnemyFactory
         _enemyPrefab = enemyPrefab;
     }
 
-    public GameObject CreateEnemy(Vector3 position, EnemySettingsSO settings)  // Замініть на EnemySettingsSO
+    public GameObject CreateEnemy(Vector3 position, EnemySettingsSO settings)
     {
         GameObject newEnemy = _diContainer.InstantiatePrefab(_enemyPrefab);
 

@@ -8,7 +8,7 @@ public class PartShop : MonoBehaviour
     public GameObject partCanvas;
     public GameObject partCanvas_2;
     public List<Part> availableParts;
-    public List<Transform> slots;
+    public List<PartSlot> slots;
     public int maxSlots = 2;
 
     private ScoreManager scoreManager;
@@ -19,7 +19,6 @@ public class PartShop : MonoBehaviour
 
         if (scoreManager != null)
         {
-            //scoreManager.SetScoreUI(new UIManagerScore());
             UpdateSlots();
         }
 
@@ -44,9 +43,9 @@ public class PartShop : MonoBehaviour
 
     public void UpdateSlots()
     {
-        foreach (Transform slot in slots)
+        foreach (var slot in slots)
         {
-            foreach (Transform child in slot)
+            foreach (Transform child in slot.transform)
             {
                 Destroy(child.gameObject);
             }
@@ -62,7 +61,7 @@ public class PartShop : MonoBehaviour
 
             if (part.isPurchased)
             {
-                GameObject partObject = Instantiate(part.prefab, slots[slotIndex]);
+                GameObject partObject = Instantiate(part.prefab, slots[slotIndex].transform);
                 PartButton partButton = partObject.GetComponent<PartButton>();
                 partButton.Setup(part, this);
 
@@ -80,13 +79,12 @@ public class PartShop : MonoBehaviour
 
             for (int i = 0; i < slots.Count; i++)
             {
-                if (slots[i].childCount == 0)
+                if (slots[i].transform.childCount == 0)
                 {
                     GameObject partObject = new GameObject("PartSlot");
-                    PartSlot partSlotComponent = partObject.AddComponent<PartSlot>();
 
-                    partSlotComponent.Setup(part, this, i);
-                    partObject.transform.parent = slots[i];
+                    slots[i].Setup(part, this, i);
+                    partObject.transform.parent = slots[i].transform;
 
                     return true;
                 }

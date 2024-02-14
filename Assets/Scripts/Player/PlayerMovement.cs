@@ -25,9 +25,12 @@ public class PlayerMovement : MonoBehaviour
     private float currentHealth;
 
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         UpdateHealthBar();
@@ -60,11 +63,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (moveInput < 0)
         {
-            //transform.localScale = new Vector3(-0.5f, 0.5f, 0.5f);
+            spriteRenderer.flipX = true;
         }
         else if (moveInput > 0)
         {
-            //transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            spriteRenderer.flipX = false;
         }
     }
 
@@ -150,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Die()
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Heal(float amount)

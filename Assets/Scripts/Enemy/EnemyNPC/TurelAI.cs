@@ -273,5 +273,10 @@ public class TurelAI : MonoBehaviour
             scoreManager.AddScore(points);
         }
     }
+
+    public EnemyType GetEnemyType()
+    {
+        return enemyType;
+    }
 }
 

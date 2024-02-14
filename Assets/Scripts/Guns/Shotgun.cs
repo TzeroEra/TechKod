@@ -5,7 +5,7 @@ using Zenject;
 
 public class Shotgun : MonoBehaviour, IWeapon
 {
-    public Transform firePoint;
+    private Transform firePoint;
     public GameObject bulletPrefab;
     public float bulletForce = 10f;
     public int numberOfBullets = 3;
@@ -28,7 +28,7 @@ public class Shotgun : MonoBehaviour, IWeapon
             Vector2 spread = Quaternion.Euler(0, 0, randomSpread) * shootDirection;
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            rb.velocity = spread * bulletForce;
+            rb.velocity = spread.normalized * bulletForce;
             Destroy(bullet, bullet.GetComponent<Bullet>().lifeTime);
         }
 
@@ -50,5 +50,11 @@ public class Shotgun : MonoBehaviour, IWeapon
     public void UpdateReloadTimers()
     {
         LastTimeShot += Time.deltaTime;
+    }
+
+    public void SetFirePoint(Transform tr)
+    {
+        firePoint = tr;
+        transform.SetParent(tr);
     }
 }

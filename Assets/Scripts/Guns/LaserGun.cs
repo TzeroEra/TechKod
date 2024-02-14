@@ -5,7 +5,7 @@ using Zenject;
 
 public class LaserGun : MonoBehaviour, IWeapon
 {
-    public Transform firePoint;
+    private Transform firePoint;
     public GameObject laserPrefab;
     public float laserForce = 30f;
     public float reloadTime = 3f;
@@ -58,5 +58,11 @@ public class LaserGun : MonoBehaviour, IWeapon
     public void UpdateReloadTimers()
     {
         LastTimeShot += Time.deltaTime;
+    }
+
+    public void SetFirePoint(Transform tr)
+    {
+        firePoint = tr;
+        transform.SetParent(tr);
     }
 }

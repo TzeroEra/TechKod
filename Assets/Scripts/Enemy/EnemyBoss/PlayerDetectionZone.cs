@@ -1,28 +1,53 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-public interface IPlayerDetection
-{
-    bool IsPlayerDetected(Vector3 position);
-}
-
-public class PlayerDetectionZone : MonoBehaviour, IPlayerDetection
+public class PlayerDetectionZone : MonoBehaviour
 {
     public float detectionRadius = 10f;
+    public Boss boss;
+    public Slider slider;
 
-    public bool IsPlayerDetected(Vector3 position)
+    private void Start()
     {
-        Collider2D playerCollider = Physics2D.OverlapCircle(transform.position, detectionRadius, LayerMask.GetMask("Player"));
-        bool isDetected = playerCollider != null;
-
-        if (isDetected)
+        if (slider != null)
         {
-            Debug.Log("Player detected in detection zone!");
+            slider.gameObject.SetActive(false);
         }
-        else
-        {
-            Debug.Log("Player not detected in detection zone.");
-        }
+    }
 
-        return isDetected;
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Player entered detection zone!");
+
+            if (slider != null)
+            {
+                slider.gameObject.SetActive(true);
+            }
+
+            if (boss != null)
+            {
+                boss.enabled = true;
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Player exited detection zone!");
+
+            if (slider != null)
+            {
+                slider.gameObject.SetActive(false);
+            }
+
+            if (boss != null)
+            {
+                boss.enabled = false;
+            }
+        }
     }
 }

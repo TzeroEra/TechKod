@@ -5,6 +5,9 @@ public class MovingPlatform : MonoBehaviour
     public Transform pointA;
     public Transform pointB;
     public float speed = 2.0f;
+    public float stopTime = 2.0f; 
+    private float timer = 0.0f; 
+    private bool isPlatformStopped = false;
 
     private Transform target;
     private bool isPlayerOnPlatform = false;
@@ -17,7 +20,20 @@ public class MovingPlatform : MonoBehaviour
 
     private void Update()
     {
-        MovePlatform();
+        if (!isPlatformStopped)
+        {
+            MovePlatform();
+        }
+        else
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= stopTime)
+            {
+                isPlatformStopped = false;
+                timer = 0.0f;
+            }
+        }
 
         if (isPlayerOnPlatform)
         {
@@ -31,6 +47,7 @@ public class MovingPlatform : MonoBehaviour
 
         if (Vector3.Distance(transform.position, target.position) < 0.1f)
         {
+            isPlatformStopped = true;
             target = (target == pointA) ? pointB : pointA;
         }
     }
@@ -39,7 +56,6 @@ public class MovingPlatform : MonoBehaviour
     {
         if (player != null)
         {
-            // «м≥нюЇмо батьк≥вський об'Їкт гравц€ на платформу
             player.transform.SetParent(transform, true);
         }
     }

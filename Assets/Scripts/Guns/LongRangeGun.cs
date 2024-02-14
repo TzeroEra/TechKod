@@ -5,7 +5,7 @@ using Zenject;
 
 public class LongRangeGun : MonoBehaviour, IWeapon
 {
-    public Transform firePoint;
+    private Transform firePoint;
     public GameObject bulletPrefab;
     public float bulletForce = 20f;
     private float longRangeGunReloadTime = 0.5f;
@@ -42,5 +42,11 @@ public class LongRangeGun : MonoBehaviour, IWeapon
     public void UpdateReloadTimers()
     {
         LastTimeShot += Time.deltaTime;
+    }
+
+    public void SetFirePoint(Transform tr)
+    {
+        firePoint = tr;
+        transform.SetParent(tr);
     }
 }

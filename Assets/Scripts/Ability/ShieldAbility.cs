@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Zenject;
 
 public interface IAddToAbilitySlot
 {
@@ -12,6 +13,10 @@ public class ShieldAbility : MonoBehaviour, IAbility, IAddToAbilitySlot
     public GameObject protectivePart;
     public float rotationSpeed = 50f;
     public float shieldDuration = 10f;
+    public GameObject protectivePart_2;
+
+    [Inject]
+    private AbilityManager abilityManager;
 
     public void Activate()
     {
@@ -21,13 +26,21 @@ public class ShieldAbility : MonoBehaviour, IAbility, IAddToAbilitySlot
     }
 
     public void AddShield()
-    { 
+    {
+        Debug.Log("Final");
+        if (abilityManager != null)
+        {
+            abilityManager.SetShieldCount(abilityManager.GetShieldCount() * 2);
+        }
+        protectivePart_2.SetActive(abilityManager.GetShieldCount() == 2);
     }
 
     private void CreateShield()
     {
         rotatingPart.SetActive(true);
         protectivePart.SetActive(true);
+
+        protectivePart_2.SetActive(abilityManager.GetShieldCount() == 2);
     }
 
     private IEnumerator RotateShield()

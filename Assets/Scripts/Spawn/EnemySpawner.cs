@@ -24,8 +24,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        //Debug.Log("EnemySpawner Start() called");
-
         if (isRepeatingSpawn)
         {
             InvokeRepeating("SpawnEnemy", 0f, spawnInterval);
@@ -56,9 +54,6 @@ public class EnemySpawner : MonoBehaviour
                     spawnPosition = transform.position;
                     break;
             }
-
-            //Debug.Log($"Spawning enemy at position: {spawnPosition}");
-
             enemyFactory.CreateEnemy(spawnPosition, enemySettings);
         }
     }
@@ -83,8 +78,6 @@ public class EnemySpawner : MonoBehaviour
                     spawnPosition = transform.position;
                     break;
             }
-
-            //Debug.Log($"Spawning enemy at position: {spawnPosition}");
 
             enemyFactory.CreateEnemy(spawnPosition, enemySettings);
         }

@@ -11,6 +11,8 @@ public interface IWeapon
     float ReloadTime { get; }
 
     void UpdateReloadTimers();
+
+    void SetFirePoint(Transform tr);
 }
 
 public class MouseInput : MonoBehaviour
@@ -20,17 +22,26 @@ public class MouseInput : MonoBehaviour
 
     private IWeapon currentWeapon;
 
-    [SerializeField] private Shotgun shotgun;
-    [SerializeField] private LongRangeGun longRangeGun;
-    [SerializeField] private LaserGun laserGun;
-
     private UIManager uiManager;
 
-    private float LastTimeShot = 0f; 
+    private float LastTimeShot = 0f;
+
+    private List<IWeapon> weapons = new List<IWeapon> ();
+
+    public List<string> weaponsName = new List<string> {"Shotgun", "LongRangeGun", "LaserGun" };
+
+    private int index = 0;
 
     private void Start()
     {
-        currentWeapon = shotgun;
+        foreach (var weap in weaponsName)
+        {
+            var weapon = weaponFactory.Create (weap);
+            weapon.SetFirePoint(transform);
+            this.weapons.Add (weapon);
+        }
+
+        currentWeapon = weapons[index];
         uiManager = FindObjectOfType<UIManager>(); 
         UpdateActiveWeaponText();
     }
@@ -58,51 +69,33 @@ public class MouseInput : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            SwitchToShotgun();
+            SwitchToGun(0);
             UpdateActiveWeaponText();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            SwitchToLongRangeGun();
+            SwitchToGun(1);
             UpdateActiveWeaponText();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            SwitchToLaserGun();
+            SwitchToGun(2);
             UpdateActiveWeaponText();
         }
     }
 
-    private void SwitchToShotgun()
+    private void SwitchToGun(int Index)
     {
-        currentWeapon = shotgun;
+        index = Index;
+        currentWeapon = weapons[Index];
     }
 
-    private void SwitchToLongRangeGun()
-    {
-        currentWeapon = longRangeGun;
-    }
-
-    private void SwitchToLaserGun()
-    {
-        currentWeapon = laserGun;
-    }
 
     private void SwitchToNextWeapon()
     {
-        if (currentWeapon == shotgun)
-        {
-            currentWeapon = longRangeGun;
-        }
-        else if (currentWeapon == longRangeGun)
-        {
-            currentWeapon = laserGun;
-        }
-        else if (currentWeapon == laserGun)
-        {
-            currentWeapon = shotgun;
-        }
-
+        index++;
+        index %= weapons.Count;
+        SwitchToGun(index);
         UpdateActiveWeaponText();
     }
 

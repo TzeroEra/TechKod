@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
@@ -17,16 +18,15 @@ public class Boss : MonoBehaviour
     public Transform firePoint;
     public float bulletForce = 10f;
 
-    public GameObject spikePrefab;
-    public float spikeDuration = 2f;
-    public float timeBetweenSpikes = 1f;
-
     public GameObject fallingColumnPrefab;
     public int numberOfColumns = 10;
 
-    private bool isAttacking = false;
+    public Tilemap tilemapGrid1;  // Посилання на перший Tilemap
+    public Tilemap tilemapGrid2;  // Посилання на другий Tilemap
+    private bool isGrid1Active = true;
+    private bool isGrid2Active = true;
 
-    private IPlayerDetection playerDetection;
+    private bool isAttacking = false;
 
     private float moveTimer;
 
@@ -34,12 +34,6 @@ public class Boss : MonoBehaviour
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
-
-        playerDetection = GetComponent<IPlayerDetection>();
-        if (playerDetection == null)
-        {
-            Debug.LogError("PlayerDetectionZone component not found on Boss!");
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -57,27 +51,19 @@ public class Boss : MonoBehaviour
 
     private void Update()
     {
-        // Викликайте метод для руху до випадкової точки, якщо таймер досягнув нуля
         if (moveTimer <= 0f)
         {
             MoveToRandomPoint();
-
-            // Скидайте таймер до вказаного періоду
             moveTimer = 10f;
         }
         else
         {
-            // Зменште таймер
             moveTimer -= Time.deltaTime;
         }
 
-        // Викликати метод атаки, якщо гравець виявлений
-        if (playerDetection != null && playerDetection.IsPlayerDetected(transform.position))
+        if (!isAttacking)
         {
-            if (!isAttacking)
-            {
-                StartCoroutine(PerformRandomAttack());
-            }
+            StartCoroutine(PerformRandomAttack());
         }
     }
 
@@ -104,10 +90,6 @@ public class Boss : MonoBehaviour
         {
             Die();
         }
-        else if (currentHealth % 50 != 0)
-        {
-            StartCoroutine(PerformRandomAttack());
-        }
     }
 
     private void Die()
@@ -120,7 +102,7 @@ public class Boss : MonoBehaviour
     {
         isAttacking = true;
 
-        int randomAttack = Random.Range(1, 4);
+        int randomAttack = Random.Range(1, 3);
         Debug.Log("Performing random attack: " + randomAttack);
 
         switch (randomAttack)
@@ -134,13 +116,13 @@ public class Boss : MonoBehaviour
                 break;
 
             case 2:
-                CallSpikes();
-                yield return new WaitForSeconds(spikeDuration);
+                ToggleGridForDuration(tilemapGrid1, ref isGrid1Active, 5f);
+                yield return new WaitForSeconds(5f);
                 break;
 
             case 3:
-                DropColumns();
-                yield return new WaitForSeconds(2f);
+                ToggleGridForDuration(tilemapGrid2, ref isGrid2Active, 5f);
+                yield return new WaitForSeconds(5f);
                 break;
         }
 
@@ -159,29 +141,13 @@ public class Boss : MonoBehaviour
         }
     }
 
-    private void CallSpikes()
+    private void ToggleGridForDuration(Tilemap tilemap, ref bool isGridActive, float duration)
     {
-        Debug.Log("Calling spikes");
-        StartCoroutine(SpawnSpikes());
-    }
+        Debug.Log("Toggling Grid for " + duration + " seconds");
 
-    private IEnumerator SpawnSpikes()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            Instantiate(spikePrefab, transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(timeBetweenSpikes);
-        }
-    }
-
-    private void DropColumns()
-    {
-        Debug.Log("Dropping columns");
-        for (int i = 0; i < numberOfColumns; i++)
-        {
-            Vector2 spawnPosition = new Vector2(Random.Range(-5f, 5f), 10f);
-            Instantiate(fallingColumnPrefab, spawnPosition, Quaternion.identity);
-        }
+        // Змінюємо стан Grid
+        isGridActive = !isGridActive;
+        tilemap.gameObject.SetActive(isGridActive);
     }
 
     private void UpdateHealthBar()

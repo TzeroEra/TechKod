@@ -1,26 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Zenject;
 
-public class AbilityManager : MonoBehaviour
+public class AbilityManager
 {
     private IAbility activeAbility;
     private IEnergyProvider energyProvider;
-    private int shieldCount; // Додайте це поле
+    private int shieldCount = 1;
+    //public event Action<int> onShieldCountChanged;
 
-    [Inject]
-    public void Construct(IEnergyProvider energyProvider)
+    public AbilityManager (IEnergyProvider energyProvider)
     {
         this.energyProvider = energyProvider;
     }
 
     public void SetShieldCount(int count)
     {
-        shieldCount = count; // Оновіть кількість щитів
+        shieldCount = count; 
     }
 
-    public int GetShieldCount() // Додайте цей метод
+    public int GetShieldCount() 
     {
         return shieldCount;
     }
